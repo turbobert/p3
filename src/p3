@@ -1,0 +1,183 @@
+#!/bin/bash
+
+
+
+U=$(uname)
+
+
+if [ "$1" = "u" ]; then
+    shift 1
+    (
+        . python3/bin/activate
+        pip install --upgrade "$@"
+    )
+    exit 0
+fi
+
+if [ "$1" = "init" ]; then
+    echo "If you press ENTER now, python3 will be reinitialized and source files will be created"
+    read CONFIRMATION
+    rm -fr python3
+    python3 -m venv python3
+    mkdir res
+    mkdir src
+    touch src/main.py
+    echo "#!/usr/bin/env python3" >src/main.py
+    $0 u pip
+    exit 0
+fi
+
+if [ "$1" = "s" ]; then
+    shift 1
+    (
+        . python3/bin/activate
+        pip search "$@"
+    )
+    exit 0
+fi
+
+if [ "$1" = "i" ]; then
+    shift 1
+    (
+        . python3/bin/activate
+        pip install "$@"
+    )
+    exit 0
+fi
+
+if [ "$1" = "ii" ]; then
+    shift 1
+    (
+        . python3/bin/activate
+        $SHELL
+    )
+    exit 0
+fi
+
+if [ "$1" = "f" ]; then
+    (
+        . python3/bin/activate
+        pip freeze >requirements.txt
+    )
+    exit 0
+fi
+
+if [ "$1" = "af" ]; then
+    (
+        . python3/bin/activate
+        pip install -r requirements.txt
+    )
+    exit 0
+fi
+
+if [ ! "$1" = "c" ]; then
+    exit 0
+fi
+
+if [ ! -d python3 ]; then
+    echo "no python3 directory" 1>&2
+    exit 1
+fi
+
+if [ ! -d src ]; then
+    echo "no src directory" 1>&2
+    exit 1
+fi
+
+if [ ! -f src/main.py ]; then
+    echo "no src/main.py file" 1>&2
+    exit 1
+fi
+
+
+OUTPUTNAME=$(pwd | tr -d ' ')
+OUTPUTNAME=${OUTPUTNAME##*/}
+
+rm -f deploy.tar.gz*
+mkdir res 2>/dev/null
+tar c python3 src res | gzip -c >deploy.tar.gz
+
+################ Darwin ###############################################################################
+
+if [ "$U" = "Darwin" ]; then
+    base64 -b 64 -i deploy.tar.gz -o deploy.tar.gz.asc
+(
+  cat <<EOF
+#!/bin/bash
+
+FILENAME="\$0"
+LINES=\`cat "\$FILENAME" | grep -n d9dbe13c-3c11-4d56-bdc0-f09aa2e65973 | cut -f 1 -d ':' | tail -n +2 | head -1\`
+
+((LINES = LINES + 1))
+TMP=\$(mktemp -d /tmp/runtime-XXXXXXXXXXXXXXXX)
+
+if [ ! -d "\$TMP" ]; then
+    exit 2
+fi
+
+# extract
+tail -n +\$LINES "\$FILENAME" | base64 -D | tar Cx \$TMP
+
+# patch activate file VIRTUAL_ENV=
+sed -i -e "s|^VIRTUAL_ENV=.*|VIRTUAL_ENV=\$TMP/python3|g" \$TMP/python3/bin/activate
+
+. \$TMP/python3/bin/activate
+python3 \$TMP/src/main.py "\$@"
+E=\$?
+rm -fr \$TMP
+
+exit \$E
+
+exit 1; # d9dbe13c-3c11-4d56-bdc0-f09aa2e65973
+EOF
+    cat deploy.tar.gz.asc
+) >deploy.sh
+fi
+
+################ Linux ################################################################################
+
+if [ "$U" = "Linux" ]; then
+    base64 deploy.tar.gz >deploy.tar.gz.asc
+(
+  cat <<EOF
+#!/bin/bash
+
+FILENAME="\$0"
+LINES=\`cat "\$FILENAME" | grep -n d9dbe13c-3c11-4d56-bdc0-f09aa2e65973 | cut -f 1 -d ':' | tail -n +2 | head -1\`
+
+((LINES = LINES + 1))
+TMP=\$(mktemp -d /tmp/runtime-XXXXXXXXXXXXXXXX)
+
+if [ ! -d "\$TMP" ]; then
+    exit 2
+fi
+
+# extract
+tail -n +\$LINES "\$FILENAME" | base64 -d | tar Cxz \$TMP
+
+# patch activate file VIRTUAL_ENV=
+sed -i -e "s|^VIRTUAL_ENV=.*|VIRTUAL_ENV=\$TMP/python3|g" \$TMP/python3/bin/activate
+
+. \$TMP/python3/bin/activate
+python3 \$TMP/src/main.py "\$@"
+E=\$?
+rm -fr \$TMP
+
+exit \$E
+
+exit 1; # d9dbe13c-3c11-4d56-bdc0-f09aa2e65973
+EOF
+    cat deploy.tar.gz.asc
+) >deploy.sh
+fi
+
+
+
+
+chmod a+x deploy.sh
+
+find . -type f -name "$OUTPUTNAME" | xargs rm -f
+
+mv deploy.sh $OUTPUTNAME
+
+rm -f deploy.tar.gz*
