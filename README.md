@@ -4,7 +4,9 @@
 
 Typical tasks like
 
-* Setign up an environment from a `requirements.txt` and some `sources`
+* Setting up an python environment from
+  ** `requirements.txt` and 
+  ** your `sources`
 * Updating/installing python packages
 * Actually packaging all into one big shell file that can run anywhere the same architecture and of course `python3-venv` must be available
 
