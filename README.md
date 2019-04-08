@@ -44,4 +44,11 @@ The script actually does *not* need `root`privileges.
 
     # run it:
     $HOME/src/my-app/my-app
-    
+
+# Supported Platforms
+
+I use this under:
+
+* Debian Linux (Stable, currently 2019)
+* MacOS (latest)
+* Raspbian Linux
