@@ -48,6 +48,14 @@ The script actually does *not* need `root`privileges.
     # run it:
     $HOME/src/my-app/my-app
 
+    # put this binary where ever you want on the same architecture
+    # so you can't cross "compile" this (I know this is not actually
+    # compiling python)
+
+# How it works
+
+When you actually execute the binary generated, it will just extract itself (a tarball with python3 env and your code) somewhere into /tmp and execute then with the parameters given to the original bash file your `main.py`. The one special thing that happens is a path replacement in the python environment, the path there is hard coded from your initial installation.
+
 # Supported Platforms
 
 I use this under:
