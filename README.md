@@ -4,9 +4,9 @@
 
 Typical tasks like
 
-* Setup an environment form a `requirements.txt` and some source files
-* updateing/installing python packages
-* actually packaging all into one big shell file that can run anywhere the same architecture and of course `python3-venv` must be available
+* Setign up an environment from a `requirements.txt` and some `sources`
+* Updating/installing python packages
+* Actually packaging all into one big shell file that can run anywhere the same architecture and of course `python3-venv` must be available
 
 # Installation
 
@@ -23,3 +23,25 @@ Fairly simple:
     chmod a+x p3
 
 The script actually does *not* need `root`privileges.
+
+# Usage
+
+    # create an empty directory
+    mkdir $HOME/src/my-app
+
+    # initialize
+    ( cd $HOME/src/my-app; p3 init )
+
+    # install requests for example
+    ( cd $HOME/src/my-app; p3 i requests )
+
+    # copy your main-python file to exactly that following location:
+    # no need for chmod a+x
+    cp PYTHONFILE $HOME/src/my-app/src/main.py
+
+    # to build/compile:
+    ( cd $HOME/src/my-app; p3 c )
+
+    # run it:
+    $HOME/src/my-app/my-app
+    
