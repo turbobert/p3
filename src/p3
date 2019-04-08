@@ -19,10 +19,13 @@ if [ "$1" = "init" ]; then
     read CONFIRMATION
     rm -fr python3
     python3 -m venv python3
-    mkdir res
-    mkdir src
-    touch src/main.py
-    echo "#!/usr/bin/env python3" >src/main.py
+    if [[ ! -d res ]]; then
+        mkdir res
+    fi
+    if [[ ! -d src ]]; then
+        mkdir src
+        echo "#!/usr/bin/env python3" >src/main.py
+    fi
     $0 u pip
     exit 0
 fi
