@@ -26,6 +26,10 @@ if [ "$1" = "init" ]; then
         mkdir src
         echo "#!/usr/bin/env python3" >src/main.py
     fi
+    if [[ ! -s .gitignore ]]; then
+        echo "/python3" >.gitignore
+        basename $(pwd) >>.gitignore
+    fi
     $0 u pip
     exit 0
 fi
