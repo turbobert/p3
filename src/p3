@@ -129,7 +129,7 @@ tail -n +\$LINES "\$FILENAME" | base64 -D | tar Cx \$TMP
 sed -i -e "s|^VIRTUAL_ENV=.*|VIRTUAL_ENV=\$TMP/python3|g" \$TMP/python3/bin/activate
 
 . \$TMP/python3/bin/activate
-python3 \$TMP/src/main.py "\$@"
+P3TMP=$TMP python3 \$TMP/src/main.py "\$@"
 E=\$?
 rm -fr \$TMP
 
@@ -166,7 +166,7 @@ tail -n +\$LINES "\$FILENAME" | base64 -d | tar Cxz \$TMP
 sed -i -e "s|^VIRTUAL_ENV=.*|VIRTUAL_ENV=\$TMP/python3|g" \$TMP/python3/bin/activate
 
 . \$TMP/python3/bin/activate
-python3 \$TMP/src/main.py "\$@"
+P3TMP=$TMP python3 \$TMP/src/main.py "\$@"
 E=\$?
 rm -fr \$TMP
 
