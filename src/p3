@@ -131,7 +131,7 @@ sed -i -e "s|^VIRTUAL_ENV=.*|VIRTUAL_ENV=\$TMP/python3|g" \$TMP/python3/bin/acti
 export ORIGCLI="\$0"
 
 . \$TMP/python3/bin/activate
-python3 \$TMP/src/main.py "\$@"
+P3TMP=$TMP python3 \$TMP/src/main.py "\$@"
 E=\$?
 rm -fr \$TMP
 
@@ -170,7 +170,7 @@ sed -i -e "s|^VIRTUAL_ENV=.*|VIRTUAL_ENV=\$TMP/python3|g" \$TMP/python3/bin/acti
 export ORIGCLI="\$0"
 
 . \$TMP/python3/bin/activate
-python3 \$TMP/src/main.py "\$@"
+P3TMP=$TMP python3 \$TMP/src/main.py "\$@"
 E=\$?
 rm -fr \$TMP
 
