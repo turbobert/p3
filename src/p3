@@ -30,6 +30,15 @@ if [ "$1" = "init" ]; then
         echo "/python3" >.gitignore
         basename $(pwd) >>.gitignore
     fi
+    if [[ ! -s wrapper.sh ]]; then
+        ( cat <<EOF
+#!/bin/bash
+
+. $(pwd)/python3/bin/activate
+python3 $(pwd)/src/main.py "\$@"
+EOF
+) >wrapper.sh
+    fi
     $0 u pip
     exit 0
 fi
