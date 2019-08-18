@@ -38,6 +38,7 @@ if [ "$1" = "init" ]; then
 python3 $(pwd)/src/main.py "\$@"
 EOF
 ) >wrapper.sh
+        chmod a+x wrapper.sh
     fi
     $0 u pip
     exit 0
