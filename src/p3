@@ -15,8 +15,10 @@ if [ "$1" = "u" ]; then
 fi
 
 if [ "$1" = "init" ]; then
-    echo "If you press ENTER now, python3 will be reinitialized and source files will be created"
-    read CONFIRMATION
+    if [[ -z "$2" ]]; then
+        echo "If you press ENTER now, python3 will be reinitialized and source files will be created"
+        read CONFIRMATION
+    fi
     rm -fr python3
     python3 -m venv python3
     if [[ ! -d res ]]; then
