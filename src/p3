@@ -31,6 +31,7 @@ if [ "$1" = "init" ]; then
     if [[ ! -s .gitignore ]]; then
         echo "/python3" >.gitignore
         basename $(pwd) >>.gitignore
+        echo "wrapper.sh" >>.gitignore
     fi
     if [[ ! -s wrapper.sh ]]; then
         ( cat <<EOF
