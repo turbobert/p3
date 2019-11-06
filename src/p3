@@ -14,6 +14,33 @@ if [ "$1" = "u" ]; then
     exit 0
 fi
 
+
+if [[ $1 = doc-full-init ]]; then
+    project_name=$2
+    if [[ -d $project_name ]]; then
+        echo "Unable to create folder $project_name, folder already exists"
+    else
+        echo "Init DOC project..."
+        mkdir $project_name
+        ( cd $project_name && p3 init here )
+        echo "Install sphinx and dependencies..."
+        ( cd $project_name && p3 i sphinx )
+        ( cd $project_name && p3 i sphinx-rtd-theme )
+        ( cd $project_name && p3 f )
+        ( cd $project_name && mkdir -p docs/main )
+        ( cd $project_name && p3 run "cd docs/main; sphinx-quickstart" )
+        MY_SED=gsed
+        ( $MY_SED -i 's|extensions = \[.*|extensions = \[ "sphinx_rtd_theme", |g' $project_name/docs/main/source/conf.py )
+        ( $MY_SED -i 's|html_theme = .*|html_theme = "sphinx_rtd_theme"|g' $project_name/docs/main/source/conf.py )
+        ( echo "import sphinx_rtd_theme"; cat $project_name/docs/main/source/conf.py ) > $project_name/docs/main/source/conf.py.tmp
+        cat $project_name/docs/main/source/conf.py.tmp > $project_name/docs/main/source/conf.py
+        rm -f $project_name/docs/main/source/conf.py.tmp
+        ( cd $project_name && p3 run "cd docs/main; make html" )
+        echo "open $project_name/docs/main/build/html/index.html"
+        echo "e $project_name/docs/main/source"
+    fi
+fi
+
 if [ "$1" = "init" ]; then
     if [[ -z "$2" ]]; then
         echo "If you press ENTER now, python3 will be reinitialized and source files will be created"
@@ -70,6 +97,15 @@ if [ "$1" = "ii" ]; then
     (
         . python3/bin/activate
         $SHELL
+    )
+    exit 0
+fi
+
+if [ "$1" = "run" ]; then
+    shift 1
+    (
+        . python3/bin/activate
+        /bin/bash -c "$@"
     )
     exit 0
 fi
