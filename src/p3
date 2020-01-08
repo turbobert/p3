@@ -15,7 +15,7 @@ if [ "$1" = "u" ]; then
 fi
 
 
-if [[ $1 = doc-full-init ]]; then
+if [[ $1 = doc ]]; then
     project_name=$2
     if [[ -d $project_name ]]; then
         echo "Unable to create folder $project_name, folder already exists"
